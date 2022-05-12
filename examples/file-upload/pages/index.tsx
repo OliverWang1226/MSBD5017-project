@@ -26,7 +26,7 @@ const Home: NextPage = () => {
   return (
     <Stack alignItems={"center"}>
       <AppTitle
-        title={"File Upload Demo"}
+        title={"Item Rate System"}
         isLoading={loading}
         walletAddress={value}
         isConnectingMetaMask={status === "connecting"}
@@ -38,7 +38,8 @@ const Home: NextPage = () => {
           const query = qs.stringify({
             walletAddress: value,
           });
-          await router.push("/upload" + "?" + query);
+          await router.push("/home" + "?" + query);
+        //   await router.push("/upload");
           setLoading(false);
         }}
         onConnectMetaMaskClick={async () => await connect()}
