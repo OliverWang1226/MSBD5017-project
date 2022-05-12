@@ -64,8 +64,8 @@ function a11yProps(index: number) {
 
 export default function Upload({ balance, walletAddress }: Props) {
     // uploaded file state
-    const [file, setFile] = React.useState<File | undefined>(undefined);
-    const [fileId, setFileId] = React.useState<string>();
+    // const [file, setFile] = React.useState<File | undefined>(undefined);
+    // const [fileId, setFileId] = React.useState<string>();
     const [isAdding, setIsAdding] = React.useState<boolean>(false);
     const [isRating, setIsRating] = React.useState<boolean>(false)
     const [tabValue, setTableValue] = React.useState('1');
@@ -91,19 +91,19 @@ export default function Upload({ balance, walletAddress }: Props) {
         setTableValue(newValue);
     };
 
-    const upload = useCallback(async () => {
-        if (file) {
-            try {
-                const browserFile = new BrowserFile(process.env.NEXT_PUBLIC_FILE_URL!);
-                const fileObject = new BrowserFileObject({ file: file, days: 2 });
+    // const upload = useCallback(async () => {
+    //     if (file) {
+    //         try {
+    //             const browserFile = new BrowserFile(process.env.NEXT_PUBLIC_FILE_URL!);
+    //             const fileObject = new BrowserFileObject({ file: file, days: 2 });
 
-                const fileId = await browserFile.uploadFile(fileObject);
-                setFileId(fileId);
-            } catch (err) {
-                window.alert("Cannot upload file");
-            }
-        }
-    }, [file]);
+    //             const fileId = await browserFile.uploadFile(fileObject);
+    //             setFileId(fileId);
+    //         } catch (err) {
+    //             window.alert("Cannot upload file");
+    //         }
+    //     }
+    // }, [file]);
 
     const updateIsAdding = useCallback(async () => {
         try {
@@ -186,7 +186,7 @@ export default function Upload({ balance, walletAddress }: Props) {
             {/* Creata New && Rate Now Buttons Group */}
             <Collapse in={isAdding === false && isRating === false}>
                 <label htmlFor="contained-button-file">
-                    <Input accept="image/*"
+                    {/* <Input accept="image/*"
                         id="contained-button-file"
                         multiple
                         type="file"
@@ -195,7 +195,7 @@ export default function Upload({ balance, walletAddress }: Props) {
                                 setFile(e.target.files[0]);
                             }
                         }}
-                    />
+                    /> */}
 
                     <Button onClick={() => {
                         updateIsAdding();
@@ -250,7 +250,7 @@ export default function Upload({ balance, walletAddress }: Props) {
                                         onChange={handleAlbumDescChange}
                                     />
                                 </Grid>
-
+                                {/* 
                                 <Grid item xs={12}>
                                     <TextField
                                         required
@@ -259,115 +259,49 @@ export default function Upload({ balance, walletAddress }: Props) {
                                         value={fileId}
                                         placeholder="Enter uploaded file ID"
                                     />
-                                </Grid>
+                                </Grid> */}
 
                             </Grid>
-
-                            <Stack alignItems={"center"} spacing={1}>
-
-
-                                {/* <Collapse in={fileId !== undefined}>
-                                    <Alert severity={"success"}>FileID: {fileId}</Alert>
-                                </Collapse> */}
-                                <Collapse in={fileId !== undefined && !isUploaded}>
-                                    <Stack mt={5} alignItems="center">
-                                        <Typography variant="h6">{file?.name}</Typography>
-                                        {/** Preview */}
-                                        <CardMedia
-                                            image={file ? URL.createObjectURL(file) : undefined}
-                                            component={"div"}
-                                            style={{ width: 500, height: 500 }}
-                                        />
-                                    </Stack>
-                                </Collapse>
-
-                                <Collapse in={file !== undefined && !isUploaded}>
-                                    <Stack direction={"row"}>
-                                        <IconButton
-                                        >
-                                            <Done color="success"
-                                                onClick={() => {
-                                                    upload();
-                                                    setIsUploaded(true);
-                                                }}
-                                            />
-                                        </IconButton>
-                                        <IconButton
-                                            onClick={() => {
-                                                setFile(undefined);
-                                                setFileId(undefined);
-                                                setIsUploaded(false);
-                                            }}
-                                        >
-                                            <Clear color="error" />
-                                        </IconButton>
-                                    </Stack>
-                                </Collapse>
-                            </Stack>
-                            <Collapse in={file === undefined}>
-                                <label htmlFor="contained-button-file">
-                                    <Input
-                                        accept="image/*"
-                                        id="contained-button-file"
-                                        multiple
-                                        type="file"
-                                        onChange={(e) => {
-                                            if (e.target.files) {
-                                                setFile(e.target.files[0]);
-                                            }
-                                        }}
-                                    />
-                                    <Button variant="contained" fullWidth sx={{ mt: 3 }} component="span">
-                                        Upload
-                                    </Button>
-                                </label>
-                            </Collapse>
-                            <Collapse in={isUploaded}>
-                                <Button
-                                    type="submit"
-                                    fullWidth
-                                    variant="contained"
-                                    sx={{ mt: 3 }}
-                                    onClick={async () => {
-                                        if (fileId == undefined) {
-                                            window.alert("Please Upload Item Cover Image");
-                                            return;
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3 }}
+                                onClick={async () => {
+                                    if (itemName == undefined) {
+                                        window.alert("Please Input Item Name");
+                                        return;
+                                    }
+                                    else if (itemDesc == undefined) {
+                                        window.alert("Please Input Item Description");
+                                        return;
+                                    }
+                                    if (contract) {
+                                        try {
+                                            await contract.addItem(itemName, itemDesc, "fileId");
                                         }
-                                        else if (itemName == undefined) {
-                                            window.alert("Please Input Item Name");
-                                            return;
+                                        catch (err) {
+                                            window.alert("Create New Item Failed");
+                                            console.log(err);
                                         }
-                                        else if (itemDesc == undefined) {
-                                            window.alert("Please Input Item Description");
-                                            return;
-                                        }
-                                        if (contract) {
-                                            try {
-                                                await contract.addItem(itemName, itemDesc, fileId);
-                                            }
-                                            catch (err) {
-                                                window.alert("Create New Item Failed");
-                                                console.log(err);
-                                            }
-                                        }
-                                        setFile(undefined);
-                                        setFileId(undefined);
-                                        setIsUploaded(false);
-                                        updateIsAdding();
-                                        getCreatedItemList();
-                                    }}
-                                >
-                                    Confirm
-                                </Button>
+                                    }
+                                    // setFile(undefined);
+                                    // setFileId(undefined);
+                                    setIsUploaded(false);
+                                    updateIsAdding();
+                                    getCreatedItemList();
+                                }}
+                            >
+                                Confirm
+                            </Button>
 
-                            </Collapse>
                             <Button
                                 fullWidth
                                 variant="outlined"
                                 sx={{ mt: 3 }}
                                 onClick={() => {
-                                    setFile(undefined);
-                                    setFileId(undefined);
+                                    // setFile(undefined);
+                                    // setFileId(undefined);
                                     setIsUploaded(false); updateIsAdding()
                                 }}
                             >
